@@ -1,9 +1,0 @@
-{"C_Cpp.default.includePath": ["/Users/lrf/Documents/ucore_os_lab/labcodes/lab1/kern/driver", "/Users/lrf/Documents/ucore_os_lab/labcodes/lab1/kern/trap", "/Users/lrf/Documents/ucore_os_lab/labcodes/lab1/kern/mm", "/Users/lrf/Documents/ucore_os_lab/labcodes/lab1/kern/debug", "/Users/lrf/Documents/ucore_os_lab/labcodes/lab1/boot", "/Users/lrf/Documents/ucore_os_lab/labcodes/lab1/libs"], "files.associations": {
-        "elf.h": "c",
-        "kmonitor.h": "c",
-        "kdebug.h": "c"
-    },
-"code-runner.executorMap": {
-    "c": "cd /Users/lrf/Documents/ucore_os_lab/labcodes/lab1 && make qemu"
-}
-}
