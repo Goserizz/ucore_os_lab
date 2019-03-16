@@ -28,7 +28,7 @@ static inline uint32_t read_ebp(void) __attribute__((always_inline));
 struct pseudodesc {
     uint16_t pd_lim;        // Limit
     uint32_t pd_base;        // Base address
-} __attribute__ ((packed));
+} __attribute__((packed));
 
 static inline void lidt(struct pseudodesc *pd) __attribute__((always_inline));
 static inline void sti(void) __attribute__((always_inline));

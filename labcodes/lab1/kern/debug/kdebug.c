@@ -229,11 +229,12 @@ print_kerninfo(void) {
  * print_debuginfo - read and print the stat information for the address @eip,
  * and info.eip_fn_addr should be the first address of the related function.
  * */
-void
+int
 print_debuginfo(uintptr_t eip) {
     struct eipdebuginfo info;
     if (debuginfo_eip(eip, &info) != 0) {
         cprintf("    <unknow>: -- 0x%08x --\n", eip);
+        return 0;
     }
     else {
         char fnname[256];
@@ -244,6 +245,7 @@ print_debuginfo(uintptr_t eip) {
         fnname[j] = '\0';
         cprintf("    %s:%d: %s+%d\n", info.eip_file, info.eip_line,
                 fnname, eip - info.eip_fn_addr);
+        return 1;
     }
 }
 
@@ -302,5 +304,20 @@ print_stackframe(void) {
       *           NOTICE: the calling funciton's return addr eip  = ss:[ebp+4]
       *                   the calling funciton's ebp = ss:[ebp]
       */
+    uint32_t ebp = read_ebp();
+    uint32_t eip = read_eip();
+    uint32_t arg;
+    while(1){
+        cprintf("ebp:0x%08x eip:0x%08x args:", ebp, eip);
+        for(int i = 0;i < 4; i ++){
+            asm volatile("movl 8(%2, %1, 4), %0" : "=r"(arg):"r"(i), "r"(ebp));
+            cprintf("0x%08x ", arg);
+        }
+        cprintf("\n");
+        if(!print_debuginfo(eip - 1))
+            break;
+        asm volatile("movl 4(%1), %0" : "=r" (eip) : "r"(ebp));
+        asm volatile("movl (%1), %0" : "=r"(ebp) : "r"(ebp));
+    }
 }
 
