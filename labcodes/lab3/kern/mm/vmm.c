@@ -364,15 +364,36 @@ do_pgfault(struct mm_struct *mm, uint32_t error_code, uintptr_t addr) {
     *   mm->pgdir : the PDT of these vma
     *
     */
+    if((ptep = get_pte(mm->pgdir, addr, 1)) == NULL)
+        goto failed;
+    if(*ptep == 0){
+        if(pgdir_alloc_page(mm->pgdir, addr, perm) == NULL)
+            goto failed;
+    }
+    else {
+        if(swap_init_ok) {
+            struct Page *page=NULL;
+            ret = swap_in(mm, addr, &page);
+            if (ret != 0) {
+                goto failed;
+            }
+            page_insert(mm->pgdir, page, addr, perm);
+            swap_map_swappable(mm, addr, page, 1);
+            page->pra_vaddr = addr;
+        }
+        else
+            goto failed;
+    }
+
 #if 0
-    /*LAB3 EXERCISE 1: YOUR CODE*/
+    /*LAB3 EXERCISE 1: 2016012205*/
     ptep = ???              //(1) try to find a pte, if pte's PT(Page Table) isn't existed, then create a PT.
     if (*ptep == 0) {
                             //(2) if the phy addr isn't exist, then alloc a page & map the phy addr with logical addr
 
     }
     else {
-    /*LAB3 EXERCISE 2: YOUR CODE
+    /*LAB3 EXERCISE 2: 2016012205
     * Now we think this pte is a  swap entry, we should load data from disk to a page with phy addr,
     * and map the phy addr with logical addr, trigger swap manager to record the access situation of this page.
     *
