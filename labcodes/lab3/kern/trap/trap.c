@@ -228,7 +228,6 @@ trap_dispatch(struct trapframe *tf) {
             *((uint32_t *)tf - 1) = (uint32_t)temp_tf;
         }
         break;
-        break;
     case IRQ_OFFSET + IRQ_IDE1:
     case IRQ_OFFSET + IRQ_IDE2:
         /* do nothing */
