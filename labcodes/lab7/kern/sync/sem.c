@@ -55,7 +55,7 @@ static __noinline uint32_t __down(semaphore_t *sem, uint32_t wait_state) {
 
 void
 up(semaphore_t *sem) {
-    __up(sem, WT_KSEM);
+    __up(sem, WT_KSEM);   
 }
 
 void

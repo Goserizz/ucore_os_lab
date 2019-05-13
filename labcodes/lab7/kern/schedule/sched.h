@@ -63,6 +63,7 @@ struct run_queue {
 };
 
 void sched_init(void);
+void sched_class_proc_tick(struct proc_struct *proc);
 void wakeup_proc(struct proc_struct *proc);
 void schedule(void);
 void add_timer(timer_t *timer);     // add timer to timer_list
