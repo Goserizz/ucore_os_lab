@@ -136,7 +136,7 @@ alloc_proc(void) {
      *     uint32_t lab6_priority;                     // FOR LAB6 ONLY: the priority of process, set by lab6_set_priority(uint32_t)
      */
     proc->rq = NULL;
-    list_init(&proc->run_link);
+    // list_init(&proc->run_link);
     proc->time_slice = 0;
     skew_heap_init(&proc->lab6_run_pool);
     proc->lab6_stride = 0;
