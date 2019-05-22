@@ -628,22 +628,26 @@ load_icode(int fd, int argc, char **kargv) {
     }
 
     int ret = -E_NO_MEM;
+    // (1) create a new mm for current process
     struct mm_struct *mm;
     if ((mm = mm_create()) == NULL) {
         goto bad_mm;
     }
+
+    // (2) create a new PDT, and mm->pgdir= kernel virtual addr of PDT
     if (setup_pgdir(mm) != 0) {
         goto bad_pgdir_cleanup_mm;
     }
 
     struct Page *page;
 
+    // (3.1) read raw data content in file and resolve elfhdr
     struct elfhdr __elf, *elf = &__elf;
     if ((ret = load_icode_read(fd, elf, sizeof(struct elfhdr), 0)) != 0) {
         goto bad_elf_cleanup_pgdir;
     }
 
-    if (elf->e_magic != ELF_MAGIC) {
+    if (elf->e_magic != ELF_MAGIC) {  // only if elf->e_magic == ELF_MAGIC, this elf is legal
         ret = -E_INVAL_ELF;
         goto bad_elf_cleanup_pgdir;
     }
@@ -651,7 +655,7 @@ load_icode(int fd, int argc, char **kargv) {
     struct proghdr __ph, *ph = &__ph;
     uint32_t vm_flags, perm, phnum;
     for (phnum = 0; phnum < elf->e_phnum; phnum ++) {
-        off_t phoff = elf->e_phoff + sizeof(struct proghdr) * phnum;
+        off_t phoff = elf->e_phoff + sizeof(struct proghdr) * phnum;  // load proghdr, proghdrs are in 
         if ((ret = load_icode_read(fd, ph, sizeof(struct proghdr), phoff)) != 0) {
             goto bad_cleanup_mmap;
         }
